@@ -10,7 +10,7 @@ import {
   heartFilled,
 } from "@/utils/Icons";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "@auth0/nextjs-auth0";
 import { Pokemon } from "@/utils/definitions";
 import { typeColor } from "@/utils/colors";
@@ -20,9 +20,19 @@ function PokemonCard({ pokemon }: { pokemon: Pokemon }) {
   const { performAction, userDetails } = useGlobalContext();
   const router = useRouter();
   
-  const [liked, setLiked] = useState(false);
-  const [bookmarked, setBookmarked] = useState(false);
-
+  const isLiked = userDetails?.liked.includes(pokemon.name)
+  const isBookmarked = userDetails?.bookmarks.includes(pokemon.name)
+  const [liked, setLiked] = useState(isLiked);
+  const [bookmarked, setBookmarked] = useState(isBookmarked);
+  
+  useEffect(() => {
+    setLiked(isLiked);
+  }, [isLiked]);
+  
+  useEffect(() => {
+    setBookmarked(isBookmarked);
+  }, [isBookmarked]);
+  
   return (
     <div className="relative p-4 bg-white rounded-xl shadow-sm flex flex-col gap-2">
       <div className="flex justify-between items-center">
@@ -38,7 +48,7 @@ function PokemonCard({ pokemon }: { pokemon: Pokemon }) {
             onClick={() => {
               if (user?.sub) {
                 // immediate UI update
-                setLiked((prev: boolean) => !prev);
+                setLiked((prev) => !prev);
                 performAction(user?.sub, pokemon?.name, "like");
               } else {
                 router.push("/api/auth/login");
@@ -57,7 +67,7 @@ function PokemonCard({ pokemon }: { pokemon: Pokemon }) {
               `}
             onClick={() => {
               if (user?.sub) {
-                setBookmarked((prev: boolean) => !prev);
+                setBookmarked((prev) => !prev);
               } else {
                 router.push("/api/auth/login");
               }
@@ -79,7 +89,7 @@ function PokemonCard({ pokemon }: { pokemon: Pokemon }) {
         <div className="flex-1">
           <Image
             src={
-              pokemon.sprites.other.home.front_default ||
+              pokemon.sprites.other.home?.front_default ||
               pokemon.sprites.front_default
             }
             alt="pokemon image"

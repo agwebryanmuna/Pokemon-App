@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import usePokemonData from "@/hooks/usePokemonData";
-import { Pokemon } from "@/utils/definitions";
+import { Pokemon, User } from "@/utils/definitions";
+import { useUserData } from "@/hooks/useUserData";
+import { useUser } from "@auth0/nextjs-auth0";
 
 
 interface GlobalContextValue {
@@ -10,13 +12,19 @@ interface GlobalContextValue {
   fetchPokemonByName: (name:string) => void
   activePokemon: Pokemon | undefined,
   loadMorePokemon: () => void,
+  performAction: (userId:string, pokemonId:string, action:string) => void,
+  fetchUserDetails: () => void,
+  userDetails: User | null;
 }
 
 const GlobalContext = React.createContext<GlobalContextValue>({})
 
 export const GlobalContextProvider = ({children}: {children: React.ReactNode}) => {
   
+  const {user} = useUser()
+  
   const {isFetching, fetchPokemonData, pokemonListDetails, fetchPokemonByName, activePokemon, loadMorePokemon} = usePokemonData()
+  const { performAction, fetchUserDetails, userDetails } = useUserData()
   
   const value = {
     isFetching,
@@ -24,8 +32,15 @@ export const GlobalContextProvider = ({children}: {children: React.ReactNode}) =
     pokemonListDetails,
     fetchPokemonByName,
     activePokemon,
-    loadMorePokemon
+    loadMorePokemon,
+    performAction,
+    fetchUserDetails,
+    userDetails
   }
+  
+  useEffect(()=> {
+    if(user) fetchUserDetails()
+  }, [user]);
   
   return (
     <GlobalContext.Provider value={value}>

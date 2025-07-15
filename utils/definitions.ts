@@ -45,3 +45,10 @@ export interface PokemonList {
   name: string;
   url: string;
 }
+
+export interface User {
+  _id: string;
+  auth0Id: string;
+  bookmarks: string[];
+  liked: string[];
+}
