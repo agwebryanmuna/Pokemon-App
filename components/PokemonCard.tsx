@@ -68,6 +68,7 @@ function PokemonCard({ pokemon }: { pokemon: Pokemon }) {
             onClick={() => {
               if (user?.sub) {
                 setBookmarked((prev) => !prev);
+                performAction(user?.sub, pokemon?.name, "bookmark");
               } else {
                 router.push("/api/auth/login");
               }

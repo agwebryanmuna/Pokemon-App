@@ -1,29 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import User from "@/models/userModel";
+import dbConnect from "@/lib/connectDB";
 
 export async function POST(req: NextRequest) {
+  await  dbConnect();
+  
   try {
-    
     const {userId, pokemonId, action} = await req.json();
-
+    
     // validate the action
     if (!['bookmark', 'like'].includes(action)) {
       return NextResponse.json({message: "Invalid action"}, {status: 400})
     }
     
     // find or create a new user
-    let user = await prisma.user.findUnique({
-      where: {auth0Id: userId},
-    });
+    let user = await User.findOne({auth0Id: userId})
     
-    if(!user) {
-      user = await prisma.user.create({
-        data: {
-          auth0Id: userId,
-          bookmarks: [],
-          liked: [],
-        }
-      })
+    if (!user) {
+      user = new User({auth0Id: userId})
+      await user.save()
     }
     
     console.log('this is the before liking user: ', user)
@@ -37,19 +32,14 @@ export async function POST(req: NextRequest) {
     
     if (currentItems.includes(pokemonId)) {
       // remove the item if it exists
-      updatedItems = currentItems.filter((item) => item !== pokemonId);
+      updatedItems = currentItems.filter((item:string) => item !== pokemonId);
     } else {
       // add the item if it does not exist
       updatedItems = [...currentItems, pokemonId];
     }
     
-    // update the user
-    await prisma.user.update({
-      where: { auth0Id: userId },
-      data: {
-        [fieldToUpdate]: updatedItems,
-      },
-    });
+    user[fieldToUpdate] = updatedItems; // update the user object in memory
+    await user.save()
     console.log('this is the after liking user: ', user)
     
     return NextResponse.json({

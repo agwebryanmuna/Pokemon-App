@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import User from "@/models/userModel";
+import dbConnect from "@/lib/connectDB";
 
 
-export async function GET(req: NextRequest, {params}:{params: {userId: string}}) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ userId: string }>}) {
+  await  dbConnect();
   try {
-    const {userId} = params;
+    const {userId} = await params;
     
     if(!userId) {
       return NextResponse.json({message: `Invalid userId`}, {status: 400});
     }
     
-    const user = await prisma.user.findUnique({where: {auth0Id: userId}})
+    const user = await User.findOne({auth0Id: userId})
     
     if(!user) {
       return NextResponse.json({message: 'User not found'}, {status: 404})
