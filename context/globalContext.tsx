@@ -9,22 +9,35 @@ interface GlobalContextValue {
   isFetching: boolean,
   fetchPokemonData: () => void,
   pokemonListDetails: Pokemon[]
-  fetchPokemonByName: (name:string) => void
+  fetchPokemonByName: (name: string) => Promise<Pokemon>
   activePokemon: Pokemon | undefined,
   loadMorePokemon: () => void,
-  performAction: (userId:string, pokemonId:string, action:string) => void,
+  performAction: (userId: string, pokemonId: string, action: string) => void,
   fetchUserDetails: () => void,
   userDetails: User | null;
+  searchQuery: string;
+  handleSearchChange: (value:string) => void;
+  setSearchQuery: any
 }
 
-const GlobalContext = React.createContext<GlobalContextValue>({})
+const GlobalContext = React.createContext<GlobalContextValue>({} as GlobalContextValue)
 
-export const GlobalContextProvider = ({children}: {children: React.ReactNode}) => {
+export const GlobalContextProvider = ({children}: { children: React.ReactNode }) => {
   
   const {user} = useUser()
   
-  const {isFetching, fetchPokemonData, pokemonListDetails, fetchPokemonByName, activePokemon, loadMorePokemon} = usePokemonData()
-  const { performAction, fetchUserDetails, userDetails } = useUserData()
+  const {
+    isFetching,
+    fetchPokemonData,
+    pokemonListDetails,
+    fetchPokemonByName,
+    activePokemon,
+    searchQuery,
+    loadMorePokemon,
+    handleSearchChange,
+    setSearchQuery
+  } = usePokemonData()
+  const {performAction, fetchUserDetails, userDetails} = useUserData()
   
   const value = {
     isFetching,
@@ -35,11 +48,14 @@ export const GlobalContextProvider = ({children}: {children: React.ReactNode}) =
     loadMorePokemon,
     performAction,
     fetchUserDetails,
-    userDetails
+    userDetails,
+    searchQuery,
+    handleSearchChange,
+    setSearchQuery
   }
   
-  useEffect(()=> {
-    if(user) fetchUserDetails()
+  useEffect(() => {
+    if (user) fetchUserDetails()
   }, [user]);
   
   return (

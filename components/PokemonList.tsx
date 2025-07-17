@@ -11,10 +11,16 @@ const PokemonList = () => {
   const {isLoading} = useUser()
   const { isFetching, pokemonListDetails, loadMorePokemon } = useGlobalContext()
   
-  if(isLoading || isFetching) return (<Loader/>)
+  if(isLoading || isFetching) {
+    return (
+      <div className="h-[91vh] flex justify-center items-center">
+        <Loader/>
+      </div>
+    )
+  }
   
   return (
-    <>
+    <div className={'px-16 py-8 grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}>
       {!isFetching && pokemonListDetails && pokemonListDetails.length > 0 && pokemonListDetails.map((pokemon, index) => (
         <div key={index}>
           <PokemonCard pokemon={pokemon}/>
@@ -27,7 +33,7 @@ const PokemonList = () => {
           </button>
         </div>
       )}
-    </>
+    </div>
   )
 }
 export default PokemonList

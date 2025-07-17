@@ -21,8 +21,6 @@ export async function POST(req: NextRequest) {
       await user.save()
     }
     
-    console.log('this is the before liking user: ', user)
-    
     // determine the action to take
     const fieldToUpdate = action === 'bookmark' ? 'bookmarks' : 'liked'
     const currentItems = user[fieldToUpdate];
@@ -40,7 +38,6 @@ export async function POST(req: NextRequest) {
     
     user[fieldToUpdate] = updatedItems; // update the user object in memory
     await user.save()
-    console.log('this is the after liking user: ', user)
     
     return NextResponse.json({
       toggledOff: currentItems.includes(pokemonId),

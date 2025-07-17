@@ -21,6 +21,30 @@ export const useUserData = () => {
   
   const performAction = async (userId:string, pokemonId:string, action:string) => {
     try {
+      // optimistically update UI
+      setUserDetails((prev) => {
+        if(!prev) return prev; // if userDetails is not set, return it as is
+        const updatedBookmarks =
+          action === "bookmark"
+            ? prev.bookmarks.includes(pokemonId) // Is it already bookmarked?
+              ? prev.bookmarks.filter((p) => p !== pokemonId) // if yes then remove it
+              : [...prev.bookmarks, pokemonId] // if no then add it
+            : prev.bookmarks; // no change in bookmarks
+        
+        const updatedLikes =
+          action === "like"
+            ? prev.liked.includes(pokemonId) // Is it already liked?
+              ? prev.liked.filter((p) => p !== pokemonId) // if yes then remove it
+              : [...prev.liked, pokemonId] // if no then add it
+            : prev.liked; // no change in likes
+        
+        return {
+          ...prev,
+          bookmarks: updatedBookmarks,
+          liked: updatedLikes,
+        };
+      });
+      
       await axios.post('/api/pokemon', {
         userId,
         pokemonId,
@@ -28,6 +52,7 @@ export const useUserData = () => {
       })
     } catch (error) {
       console.log('Error performing action', error)
+      // fetchUserDetails()
     }
   }
   
