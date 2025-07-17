@@ -51,7 +51,7 @@ function PokemonCard({ pokemon }: { pokemon: Pokemon }) {
                 setLiked((prev) => !prev);
                 performAction(user?.sub, pokemon?.name, "like");
               } else {
-                router.push("/api/auth/login");
+                router.push("/auth/login");
               }
             }}
           >
@@ -70,7 +70,7 @@ function PokemonCard({ pokemon }: { pokemon: Pokemon }) {
                 setBookmarked((prev) => !prev);
                 performAction(user?.sub, pokemon?.name, "bookmark");
               } else {
-                router.push("/api/auth/login");
+                router.push("/auth/login");
               }
             }}
           >

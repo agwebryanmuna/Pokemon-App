@@ -28,7 +28,7 @@ const BookmarksPage = () => {
   
   if (loading) {
     return (
-      <div className="h-[91vh] flex justify-center items-center">
+      <div className="h-[80vh] flex justify-center items-center">
         <Loader/>
       </div>
     );
