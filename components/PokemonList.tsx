@@ -13,7 +13,7 @@ const PokemonList = () => {
   
   if(isLoading || isFetching) {
     return (
-      <div className="h-[91vh] flex justify-center items-center">
+      <div className="h-[40vh] flex justify-center items-center">
         <Loader/>
       </div>
     )

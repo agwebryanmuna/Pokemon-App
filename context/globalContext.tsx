@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import usePokemonData from "@/hooks/usePokemonData";
 import { Pokemon, User } from "@/utils/definitions";
 import { useUserData } from "@/hooks/useUserData";
@@ -17,7 +17,10 @@ interface GlobalContextValue {
   userDetails: User | null;
   searchQuery: string;
   handleSearchChange: (value:string) => void;
-  setSearchQuery: any
+  setSearchQuery:  Dispatch<SetStateAction<string>>,
+  handleFilterChange: (key:string, value:string) => void,
+  filters: Record<string, string>,
+  clearFilters: () => void,
 }
 
 const GlobalContext = React.createContext<GlobalContextValue>({} as GlobalContextValue)
@@ -35,7 +38,10 @@ export const GlobalContextProvider = ({children}: { children: React.ReactNode })
     searchQuery,
     loadMorePokemon,
     handleSearchChange,
-    setSearchQuery
+    setSearchQuery,
+    handleFilterChange,
+    filters,
+    clearFilters,
   } = usePokemonData()
   const {performAction, fetchUserDetails, userDetails} = useUserData()
   
@@ -51,7 +57,10 @@ export const GlobalContextProvider = ({children}: { children: React.ReactNode })
     userDetails,
     searchQuery,
     handleSearchChange,
-    setSearchQuery
+    setSearchQuery,
+    handleFilterChange,
+    filters,
+    clearFilters,
   }
   
   useEffect(() => {

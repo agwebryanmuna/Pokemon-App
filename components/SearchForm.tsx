@@ -8,7 +8,6 @@ import { useDebounce } from "react-use";
 const SearchForm = () => {
   const { searchQuery, handleSearchChange, setSearchQuery } = useGlobalContext();
   useDebounce(() => {
-    console.log(searchQuery, 'searchQuery')
     handleSearchChange(searchQuery)
   }, 1000, [searchQuery]);
   
